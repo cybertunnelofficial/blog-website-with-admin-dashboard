@@ -1,3 +1,7 @@
+<?php require("ct-config.php"); ?>
+<?php include_once("ct-includes/ct-sitedata.php"); ?>
+<?php include_once("ct-includes/ct-plugins.php"); ?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -87,7 +91,12 @@
           <div class="row blog-entries">
             <div class="col-md-12 col-lg-8 main-content">
               <div class="row">
-                <div class="col-md-6">
+                <?php
+                  $postquery = "SELECT * FROM siteposts";
+                  $runquery = mysqli_query($connection, $postquery);
+                  while($posts=mysqli_fetch_assoc($connection, $postquery)){
+                  ?> 
+                    <!-- <div class="col-md-6">
                   <a href="blog-single.html" class="blog-entry element-animate" data-animate-effect="fadeIn">
                     <img src="images/img_5.jpg" alt="Image placeholder">
                     <div class="blog-content-body">
@@ -99,8 +108,25 @@
                       <h2>How to Find the Video Games of Your Youth</h2>
                     </div>
                   </a>
-                </div>
-                <div class="col-md-6">
+                </div> -->
+
+                    <?php
+                  }
+                ?>
+<!--                 <div class="col-md-6">
+                  <a href="blog-single.html" class="blog-entry element-animate" data-animate-effect="fadeIn">
+                    <img src="images/img_5.jpg" alt="Image placeholder">
+                    <div class="blog-content-body">
+                      <div class="post-meta">
+                        <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib"> Colorlib</span>&bullet;
+                        <span class="mr-2">March 15, 2018 </span> &bullet;
+                        <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
+                      </div>
+                      <h2>How to Find the Video Games of Your Youth</h2>
+                    </div>
+                  </a>
+                </div> -->
+<!--                 <div class="col-md-6">
                   <a href="blog-single.html" class="blog-entry element-animate" data-animate-effect="fadeIn">
                     <img src="images/img_6.jpg" alt="Image placeholder">
                     <div class="blog-content-body">
@@ -190,7 +216,7 @@
                       <h2>How to Find the Video Games of Your Youth</h2>
                     </div>
                   </a>
-                </div>
+                </div> -->
               </div>
               <div class="row mt-5">
                 <div class="col-md-12 text-center">
