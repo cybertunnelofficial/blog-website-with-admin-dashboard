@@ -12,7 +12,7 @@
               <div class="col-3 search-top">
                 <form action="search.php" class="search-top-form">
                   <!-- <span class="icon fa fa-search"></span> -->
-                  <input type="search" id="search" name="q" placeholder="">
+                  <input type="search" id="search" name="q" placeholder="Search for something" value="<?php if(isset($_GET["q"])) echo $_GET["q"]; ?>">
                   <a href=""><span class="icon fa fa-search"></span></a>
                 </form>
               </div>

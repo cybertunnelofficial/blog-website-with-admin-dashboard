@@ -13,7 +13,14 @@ else
 
 $post_per_page = 12;
 $result = ($page - 1) * $post_per_page;
-
+if(isset($_POST["submit"]))  
+ {  
+      if(!empty($_POST["q"]))  
+      {  
+           $query = str_replace(" ", "+", $_POST["q"]);  
+           header("location:search.php?q=".$query);  
+      }  
+ } 
 ?>
 <!doctype html>
 <html lang="en">
@@ -106,7 +113,13 @@ $result = ($page - 1) * $post_per_page;
             <div class="col-md-12 col-lg-8 main-content">
               <div class="row">
                 <?php
-$postquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $post_per_page";
+        if (isset($_GET['q'])) {
+        $searchquery = $_GET['q'];
+        $postquery = "SELECT * FROM siteposts WHERE title LIKE '%$searchquery%' ORDER BY id DESC LIMIT $result, $post_per_page";
+      }else{
+        $postquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $post_per_page";
+      }
+// $postquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $post_per_page";
 $runquery = mysqli_query($connection, $postquery);
 while ($posts = $runquery->fetch_assoc())
 {
@@ -234,6 +247,13 @@ while ($posts = $runquery->fetch_assoc())
                 </div> -->
               </div>
               <?php
+if (isset($_GET['q'])) {
+  $searchquery=$_GET['q'];
+  $squery = "SELECT * FROM siteposts WHERE title LIKE '%$searchquery%' ";
+}else{
+    echo "error";
+}
+
 $pq = "SELECT * FROM siteposts";
 $pqresult = mysqli_query($connection, $pq);
 $tposts = mysqli_num_rows($pqresult);
