@@ -10,10 +10,10 @@
                 <a href="#"><span class="fa fa-youtube-play"></span></a>
               </div>
               <div class="col-3 search-top">
-                <!-- <a href="#"><span class="fa fa-search"></span></a> -->
-                <form action="#" class="search-top-form">
-                  <span class="icon fa fa-search"></span>
-                  <input type="text" id="s" placeholder="Type keyword to search...">
+                <form action="search.php" class="search-top-form">
+                  <!-- <span class="icon fa fa-search"></span> -->
+                  <input type="search" id="search" name="q" placeholder="">
+                  <a href=""><span class="icon fa fa-search"></span></a>
                 </form>
               </div>
             </div>
