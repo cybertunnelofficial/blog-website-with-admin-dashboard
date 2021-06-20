@@ -4,15 +4,15 @@
               <?php
 if (isset($_GET['page']))
 {
-    $page = $_GET['page'];
+    $current_page = $_GET['page'];
 }
 else
 {
-    $page = 1;
+    $current_page = 1;
 }
 
 $post_per_page = 12;
-$result = ($page - 1) * $post_per_page;
+$result = ($current_page - 1) * $post_per_page;
 if(isset($_POST["submit"]))  
  {  
       if(!empty($_POST["q"]))  
@@ -105,7 +105,26 @@ if(isset($_POST["submit"]))
         <div class="container">
           <div class="row">
             <div class="col-md-6">
-              <h2 class="mb-4">Latest Posts</h2>
+                <?php
+if (isset($_GET['q'])) {
+  $searchquery=$_GET['q'];
+  $squery = "SELECT * FROM siteposts WHERE title LIKE '%$searchquery%' ";
+}else{
+    echo "Please Enter An Search Term To Continue!";
+}
+
+$pq = "SELECT * FROM siteposts WHERE title LIKE '%$searchquery%' ";
+$pqresult = mysqli_query($connection, $pq);
+$tposts = mysqli_num_rows($pqresult);
+$tppage = ceil($tposts / $post_per_page);
+if (isset($_GET['q'])) {
+        $searchquery = $_GET['q'];
+        $postquery = "SELECT * FROM siteposts WHERE title LIKE '%$searchquery%' ORDER BY id DESC LIMIT $result, $post_per_page";
+        ?><h2 class="mb-4">Found <?=$tposts?> Results for "<?=$searchquery?>"</h2><?php
+      }else{
+        // $postquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $post_per_page";
+      ?>
+              <h2 class="mb-4">Latest Posts</h2><?php } ?>
             </div>
           </div>
 
@@ -113,12 +132,6 @@ if(isset($_POST["submit"]))
             <div class="col-md-12 col-lg-8 main-content">
               <div class="row">
                 <?php
-        if (isset($_GET['q'])) {
-        $searchquery = $_GET['q'];
-        $postquery = "SELECT * FROM siteposts WHERE title LIKE '%$searchquery%' ORDER BY id DESC LIMIT $result, $post_per_page";
-      }else{
-        $postquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $post_per_page";
-      }
 // $postquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $post_per_page";
 $runquery = mysqli_query($connection, $postquery);
 while ($posts = $runquery->fetch_assoc())
@@ -246,26 +259,12 @@ while ($posts = $runquery->fetch_assoc())
                   </a>
                 </div> -->
               </div>
-              <?php
-if (isset($_GET['q'])) {
-  $searchquery=$_GET['q'];
-  $squery = "SELECT * FROM siteposts WHERE title LIKE '%$searchquery%' ";
-}else{
-    echo "error";
-}
-
-$pq = "SELECT * FROM siteposts";
-$pqresult = mysqli_query($connection, $pq);
-$tposts = mysqli_num_rows($pqresult);
-$tppage = ceil($tposts / $post_per_page);
-
-?>
               <div class="row mt-5">
                 <div class="col-md-12 text-center">
                   <nav aria-label="Page navigation" class="text-center">
                     <ul class="pagination">
                       <?php
-if ($page > 1)
+if ($current_page < $tppage)
 {
     $switch = "";
 }
@@ -273,18 +272,18 @@ else
 {
     $switch = "hidden";
 } ?>
-                      <li class="page-item active" <?=$switch ?>><a class="page-link" href="?page=<?=$page - 1 ?>">&lt;</a></li>
+                      <li class="page-item active" <?=$switch ?>><a class="page-link" href="?<?php if (isset($_GET['q'])){echo "q=$searchquery&";}?>page=<?=$current_page - 1 ?>">&lt;</a></li>
                       <?php
 for ($tpage = 1;$tpage <= $tppage;$tpage++)
 {
 ?>
-                        <li class="page-item"><a class="page-link" href="?page=<?=$tpage
+                        <li class="page-item"><a class="page-link" href="?<?php if (isset($_GET['q'])){echo "q=$searchquery&";}?>page=<?=$tpage
 ?>"><?=$tpage
 ?></a></li>
                      <?php
 } ?>
                      <?php
-if ($page <= $tppage)
+if ($current_page <= $tppage)
 {
     $nswitch = "";
 }
@@ -292,8 +291,11 @@ else
 {
     $nswitch = "hidden";
 }
+// echo $current_page;
+// echo $tpage;
+// echo $tppage;
 ?>
-                      <li class="page-item" <?=$nswitch ?>><a class="page-link" href="?page=<?=$page + 1 ?>">&gt;</a></li>
+                      <li class="page-item" <?=$nswitch ?>><a class="page-link" href="?<?php if (isset($_GET['q'])){echo "q=$searchquery&";}?>page=<?=$current_page + 1 ?>">&gt;</a></li>
                     </ul>
                   </nav>
                 </div>
