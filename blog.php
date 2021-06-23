@@ -1,11 +1,12 @@
 <?php require("ct-config.php"); ?>
 <?php include_once("ct-includes/ct-sitedata.php"); ?>
 <?php include_once("ct-includes/ct-plugins.php"); ?>
-<?php require("ct-includes/functions.php"); ?>
+<?php require("ct-includes/functions.php"); 
+?>
 <!doctype html>
 <html lang="en">
   <head>
-    <title>iDense Blogs</title>
+    <title><?=$getpost['title']?> | <?=$sitename?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300, 400,700|Inconsolata:400,700" rel="stylesheet">
@@ -25,6 +26,7 @@
                   $postquery = "SELECT * FROM siteposts WHERE id=$postid";
                   $runquery = mysqli_query($connection, $postquery);
                   $getpost=$runquery->fetch_assoc();
+                  $date = $getpost['date'];
                   ?> 
       <!-- END header -->
       <section class="site-section py-lg">
@@ -34,8 +36,8 @@
             <div class="col-md-12 col-lg-8 main-content">
               <img src="<?=$getpost['fiurl']?>" alt="Image" class="img-fluid mb-5">
               <div class="post-meta">
-                <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib" class="mr-2"> Colorlib</span>&bullet;
-                <span class="mr-2">March 15, 2018 </span> &bullet;
+                <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib" class="mr-2"><?="By " . $firstname?></span>&bullet;
+                <span class="mr-2"><?php echo date('dS M, y',strtotime($date)); ?></span> &bullet;
                 <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
               </div>
               <h1 class="mb-4"><?=$getpost['title']?></h1>
@@ -65,7 +67,7 @@
               </div>
               
               <div class="pt-5">
-                <p>Categories:  <a href="#"><?=fetchCategory($connection, $getpost['category_id'])?></a> Tags: <a href="#"><?=fetchTag($connection, $getpost['tag_id'])?></a></p>
+                <p>Categories:  <a href="#"><?=fetchCategory($connection, $getpost['category_id'])?></a></p>
               </div>
               <div class="pt-5">
                 <h3 class="mb-5">6 Comments</h3>
@@ -176,6 +178,9 @@
           </div>
         </div>
       </section>
+      <?php
+        
+      ?>
       <section class="py-5">
         <div class="container">
           <div class="row">
@@ -184,42 +189,29 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6 col-lg-4">
-              <a href="#" class="a-block sm d-flex align-items-center height-md" style="background-image: url('images/img_2.jpg'); ">
-                <div class="text">
-                  <div class="post-meta">
-                    <span class="category">Lifestyle</span>
-                    <span class="mr-2">March 15, 2018 </span> &bullet;
-                    <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
-                  </div>
-                  <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>
-                </div>
-              </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-              <a href="#" class="a-block sm d-flex align-items-center height-md" style="background-image: url('images/img_3.jpg'); ">
-                <div class="text">
-                  <div class="post-meta">
-                    <span class="category">Travel</span>
-                    <span class="mr-2">March 15, 2018 </span> &bullet;
-                    <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
-                  </div>
-                  <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>
-                </div>
-              </a>
-            </div>
+          <?php
+            $relatedquery = "SELECT * FROM siteposts WHERE category_id={$getpost['category_id']} ORDER BY id DESC";
+            $rrun = mysqli_query($connection, $relatedquery);
+            while ($rpost=mysqli_fetch_assoc($rrun)) {
+              if ($rpost['id']==$postid) {
+                continue;
+              }
+              ?>
             <div class="col-md-6 col-lg-4">
               <a href="#" class="a-block sm d-flex align-items-center height-md" style="background-image: url('images/img_4.jpg'); ">
                 <div class="text">
                   <div class="post-meta">
-                    <span class="category">Food</span>
+                    <span class="category"><?=fetchCategory($connection, $rpost['category_id'])?></span>
                     <span class="mr-2">March 15, 2018 </span> &bullet;
                     <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
                   </div>
-                  <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>
+                  <h3><?=$rpost['title']?></h3>
                 </div>
               </a>
-            </div>
+            </div><?php }
+          
+            // echo $nasdadfw;
+          ?>
           </div>
         </div>
       </section>

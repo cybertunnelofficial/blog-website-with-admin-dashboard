@@ -1,6 +1,7 @@
 <?php require ("ct-config.php"); ?>
 <?php include_once ("ct-includes/ct-sitedata.php"); ?>
 <?php include_once ("ct-includes/ct-plugins.php"); ?>
+<?php include_once ("ct-includes/functions.php"); ?>
               <?php
 if (isset($_GET['page']))
 {

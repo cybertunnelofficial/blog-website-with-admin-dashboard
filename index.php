@@ -1,3 +1,4 @@
+<?php require ("ct-includes/functions.php");?>
 <?php require ("ct-config.php"); ?>
 <?php include_once ("ct-includes/ct-sitedata.php"); ?>
 <?php include_once ("ct-includes/ct-plugins.php"); ?>
@@ -10,82 +11,40 @@ else
 {
     $page = 1;
 }
-
-$post_per_page = 12;
-$result = ($page - 1) * $post_per_page;
-
+$getpost_per_page = 12;
+$result = ($page - 1) * $getpost_per_page;
 ?>
-<!doctype html>
-<html lang="en">
-  <head>
-    <title>iDense Blogs</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300, 400,700|Inconsolata:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/animate.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="fonts/ionicons/css/ionicons.min.css">
-    <link rel="stylesheet" href="fonts/fontawesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
-    <!-- Theme Style -->
-    <link rel="stylesheet" href="css/style.css">
-  </head>
   <body>
     <?php include_once ("ct-includes/ct-header.php"); ?>
-     <section class="site-section pt-5 pb-5">
+    <section class="site-section pt-5 pb-5">
         <div class="container">
           <div class="row">
             <div class="col-md-12">
               <div class="owl-carousel owl-theme home-slider">
+                <?php
+                  $getpost_per_slide = 3;
+                  $getslidequery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $getpost_per_slide";
+                  $slidequery = mysqli_query($connection, $getslidequery);
+                  while ($getpostforslide = $slidequery->fetch_assoc())
+                  {$date = $getpostforslide['date'];
+
+                  ?>  
                 <div>
-                  <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('images/img_1.jpg'); ">
+                  <a href="blog.php?id=<?=$getpost['id'] ?>" class="a-block d-flex align-items-center height-lg" style="background-image: url('<?=$getpostforslide['fiurl'] ?>'); ">
                     <div class="text half-to-full">
-                      <span class="category mb-5">Food</span>
+                      <span class="category mb-5"><?=fetchCategory($connection, $getpostforslide['category_id'])?></span>
                       <div class="post-meta">
                         
-                        <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib"> Colorlib</span>&bullet;
-                        <span class="mr-2">March 15, 2018 </span> &bullet;
+                        <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib"><?=" By " . $firstname?></span>&bullet;
+                        <span class="mr-2"><?php echo date('d M, y',strtotime($date)); ?></span> &bullet;
                         <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
                         
                       </div>
-                      <h3>How to Find the Video Games of Your Youth</h3>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>
+                      <h3><?=$getpostforslide['title']?></h3>
+                      <p style="overflow: hidden;white-space: nowrap; text-overflow: ellipsis;"><?=$getpostforslide['content']?></p>
                     </div>
                   </a>
-                </div>
-                <div>
-                  <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('images/img_2.jpg'); ">
-                    <div class="text half-to-full">
-                      <span class="category mb-5">Travel</span>
-                      <div class="post-meta">
-                        
-                        <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib"> Colorlib</span>&bullet;
-                        <span class="mr-2">March 15, 2018 </span> &bullet;
-                        <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
-                        
-                      </div>
-                      <h3>How to Find the Video Games of Your Youth</h3>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>
-                    </div>
-                  </a>
-                </div>
-                <div>
-                  <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('images/img_3.jpg'); ">
-                    <div class="text half-to-full">
-                      <span class="category mb-5">Sports</span>
-                      <div class="post-meta">
-                        
-                        <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib"> Colorlib</span>&bullet;
-                        <span class="mr-2">March 15, 2018 </span> &bullet;
-                        <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
-                        
-                      </div>
-                      <h3>How to Find the Video Games of Your Youth</h3>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>
-                    </div>
-                  </a>
-                </div>
+                </div><?php } ?>
               </div>
               
             </div>
@@ -106,21 +65,21 @@ $result = ($page - 1) * $post_per_page;
             <div class="col-md-12 col-lg-8 main-content">
               <div class="row">
                 <?php
-$postquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $post_per_page";
-$runquery = mysqli_query($connection, $postquery);
-while ($posts = $runquery->fetch_assoc())
-{
+$getpostquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $getpost_per_page";
+$runquery = mysqli_query($connection, $getpostquery);
+while ($getpost = $runquery->fetch_assoc())
+{$date = $getpost['date'];
 
 ?> 
                     <div class="col-md-6">
-                  <a href="blog.php?id=<?=$posts['id'] ?>" class="blog-entry element-animate" data-animate-effect="fadeIn">
-                    <img src="<?=$posts['fiurl'] ?>" alt="Image placeholder">
+                  <a href="blog.php?id=<?=$getpost['id'] ?>" class="blog-entry element-animate" data-animate-effect="fadeIn">
+                    <img src="<?=$getpost['fiurl'] ?>" alt="Image placeholder">
                     <div class="blog-content-body">
                       <div class="post-meta">
-                        <span class="author mr-2"><?=$posts['author'] ?></span>&bullet;
-                        <span class="mr-2">March 15, 2018 </span> &bullet;
+                        <span class="author mr-2"><?="By " . $firstname?></span>&bullet;
+                        <span class="mr-2"><?php echo date('d M, y',strtotime($date)); ?></span>
                       </div>
-                      <h2><?=$posts['title'] ?></h2>
+                      <h2><?=$getpost['title'] ?></h2>
                     </div>
                   </a>
                 </div>
@@ -237,7 +196,7 @@ while ($posts = $runquery->fetch_assoc())
 $pq = "SELECT * FROM siteposts";
 $pqresult = mysqli_query($connection, $pq);
 $tposts = mysqli_num_rows($pqresult);
-$tppage = ceil($tposts / $post_per_page);
+$tppage = ceil($tposts / $getpost_per_page);
 
 ?>
               <div class="row mt-5">
