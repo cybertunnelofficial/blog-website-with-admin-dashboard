@@ -3,10 +3,20 @@
 <?php include_once("ct-includes/ct-plugins.php"); ?>
 <?php require("ct-includes/functions.php"); 
 ?>
+ <?php
+                  $postid = $_GET['id'];
+                  $postquery = "SELECT * FROM siteposts WHERE id=$postid";
+                  $runquery = mysqli_query($connection, $postquery);
+                  $getpost=$runquery->fetch_assoc();
+                  $date = $getpost['date'];
+                  ?> 
+<?php
+$comments = getComments($connection, $postid);
+$nocomm = count($comments);
+?>
 <!doctype html>
 <html lang="en">
   <head>
-    <title><?=$getpost['title']?> | <?=$sitename?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300, 400,700|Inconsolata:400,700" rel="stylesheet">
@@ -21,14 +31,8 @@
   </head>
   <body>
    <?php include_once("ct-includes/ct-header.php"); ?>
-                   <?php
-                   $postid = $_GET['id'];
-                  $postquery = "SELECT * FROM siteposts WHERE id=$postid";
-                  $runquery = mysqli_query($connection, $postquery);
-                  $getpost=$runquery->fetch_assoc();
-                  $date = $getpost['date'];
-                  ?> 
       <!-- END header -->
+      <title><?=$getpost['title']?> | <?=$sitename?></title>
       <section class="site-section py-lg">
         <div class="container">
           
@@ -37,8 +41,8 @@
               <img src="<?=$getpost['fiurl']?>" alt="Image" class="img-fluid mb-5">
               <div class="post-meta">
                 <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib" class="mr-2"><?="By " . $firstname?></span>&bullet;
-                <span class="mr-2"><?php echo date('dS M, y',strtotime($date)); ?></span> &bullet;
-                <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
+                <span class="mr-2"><?php echo date('F jS, Y',strtotime($date)); ?></span> &bullet;
+                <span class="ml-2"><span class="fa fa-comments"></span> <?=$nocomm?></span>
               </div>
               <h1 class="mb-4"><?=$getpost['title']?></h1>
               <a class="category mb-5" href="#"><?=fetchCategory($connection, $getpost['category_id'])?></a>
@@ -69,21 +73,41 @@
               <div class="pt-5">
                 <p>Categories:  <a href="#"><?=fetchCategory($connection, $getpost['category_id'])?></a></p>
               </div>
+
               <div class="pt-5">
-                <h3 class="mb-5">6 Comments</h3>
+                <h3 class="mb-5"><?php if ($nocomm<1) {
+                  echo "No";
+                }else{
+                  echo $nocomm;
+                }
+                ?> <?php if ($nocomm<=1) {
+                  echo "Comment";
+                }else{
+                  echo "Comments";
+                }
+                ?></h3>
                 <ul class="comment-list">
-                  <li class="comment">
+              <?php
+              if ($nocomm<1) {
+                  echo "Be The First To Comment on This Post!";
+                }
+              foreach ($comments as $comment) {
+                ?> <li class="comment">
                     <div class="vcard">
                       <img src="images/person_1.jpg" alt="Image placeholder">
                     </div>
                     <div class="comment-body">
-                      <h3>Jean Doe</h3>
-                      <div class="meta">January 9, 2018 at 2:21pm</div>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                      <p><a href="#" class="reply rounded">Reply</a></p>
+                      <h3><?=$comment['name']?></h3>
+                      <div class=""><?=date('F jS, Y',strtotime($comment['time']))?></div>
+                      <p><?=$comment['content']?></p>
+                      <!-- <p><a href="#" class="reply rounded">Reply</a></p> -->
                     </div>
                   </li>
-                  <li class="comment">
+                  <?php
+              }
+
+              ?>
+                  <!-- <li class="comment">
                     <div class="vcard">
                       <img src="images/person_1.jpg" alt="Image placeholder">
                     </div>
@@ -92,8 +116,8 @@
                       <div class="meta">January 9, 2018 at 2:21pm</div>
                       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
                       <p><a href="#" class="reply rounded">Reply</a></p>
-                    </div>
-                    <ul class="children">
+                    </div> -->
+                    <!-- <ul class="children">
                       <li class="comment">
                         <div class="vcard">
                           <img src="images/person_1.jpg" alt="Image placeholder">
@@ -131,9 +155,9 @@
                           </li>
                         </ul>
                       </li>
-                    </ul>
-                  </li>
-                  <li class="comment">
+                    </ul> -->
+                  <!-- </li> -->
+                 <!--  <li class="comment">
                     <div class="vcard">
                       <img src="images/person_1.jpg" alt="Image placeholder">
                     </div>
@@ -143,29 +167,26 @@
                       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
                       <p><a href="#" class="reply rounded">Reply</a></p>
                     </div>
-                  </li>
+                  </li> -->
                 </ul>
                 <!-- END comment-list -->
                 
                 <div class="comment-form-wrap pt-5">
                   <h3 class="mb-5">Leave a comment</h3>
-                  <form action="#" class="p-5 bg-light">
+                  <form action="ct-includes/add_comment.php" method="POST" class="p-5 bg-light">
                     <div class="form-group">
                       <label for="name">Name *</label>
-                      <input type="text" class="form-control" id="name">
+                      <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="form-group">
                       <label for="email">Email *</label>
-                      <input type="email" class="form-control" id="email">
+                      <input type="email" class="form-control" id="email" name="email" required>
                     </div>
                     <div class="form-group">
-                      <label for="website">Website</label>
-                      <input type="url" class="form-control" id="website">
+                      <label for="message">Content</label>
+                      <textarea id="message" cols="30" rows="10" class="form-control" name="content" required></textarea>
                     </div>
-                    <div class="form-group">
-                      <label for="message">Message</label>
-                      <textarea name="" id="message" cols="30" rows="10" class="form-control"></textarea>
-                    </div>
+                      <input class="form-control" hidden value="<?=$postid?>" id="email" name="postid" required>
                     <div class="form-group">
                       <input type="submit" value="Post Comment" class="btn btn-primary">
                     </div>
@@ -179,9 +200,10 @@
         </div>
       </section>
       <?php
-        
-      ?>
-      <section class="py-5">
+      $relatedquery = "SELECT * FROM siteposts WHERE category_id={$getpost['category_id']} ORDER BY id DESC";
+      $rrun = mysqli_query($connection, $relatedquery);
+      $rpost=mysqli_fetch_assoc($rrun);?>
+        <section class="py-5">
         <div class="container">
           <div class="row">
             <div class="col-md-12">
@@ -190,8 +212,6 @@
           </div>
           <div class="row">
           <?php
-            $relatedquery = "SELECT * FROM siteposts WHERE category_id={$getpost['category_id']} ORDER BY id DESC";
-            $rrun = mysqli_query($connection, $relatedquery);
             while ($rpost=mysqli_fetch_assoc($rrun)) {
               if ($rpost['id']==$postid) {
                 continue;
@@ -208,14 +228,10 @@
                   <h3><?=$rpost['title']?></h3>
                 </div>
               </a>
-            </div><?php }
-          
-            // echo $nasdadfw;
-          ?>
+            </div><?php }?>
           </div>
         </div>
       </section>
-      <!-- END section -->
       
 <?php include_once("ct-includes/ct-footer.php"); ?>
     </div>

@@ -14,9 +14,15 @@ else
 $getpost_per_page = 12;
 $result = ($page - 1) * $getpost_per_page;
 ?>
+<?php
+$getpostquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $getpost_per_page";
+$runquery = mysqli_query($connection, $getpostquery);
+$getpost = $runquery->fetch_assoc()
+?>
   <body>
     <?php include_once ("ct-includes/ct-header.php"); ?>
-    <section class="site-section pt-5 pb-5">
+  <title><?=$sitename?> | <?=$sitetagline?></title>
+  <section class="site-section pt-5 pb-5">
         <div class="container">
           <div class="row">
             <div class="col-md-12">
@@ -36,8 +42,7 @@ $result = ($page - 1) * $getpost_per_page;
                       <div class="post-meta">
                         
                         <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib"><?=" By " . $firstname?></span>&bullet;
-                        <span class="mr-2"><?php echo date('d M, y',strtotime($date)); ?></span> &bullet;
-                        <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
+                        <span class="mr-2"><?php echo date('F jS, Y',strtotime($date)); ?></span> &bullet;
                         
                       </div>
                       <h3><?=$getpostforslide['title']?></h3>
@@ -65,8 +70,6 @@ $result = ($page - 1) * $getpost_per_page;
             <div class="col-md-12 col-lg-8 main-content">
               <div class="row">
                 <?php
-$getpostquery = "SELECT * FROM `siteposts` ORDER BY ID DESC LIMIT $result, $getpost_per_page";
-$runquery = mysqli_query($connection, $getpostquery);
 while ($getpost = $runquery->fetch_assoc())
 {$date = $getpost['date'];
 
@@ -77,7 +80,7 @@ while ($getpost = $runquery->fetch_assoc())
                     <div class="blog-content-body">
                       <div class="post-meta">
                         <span class="author mr-2"><?="By " . $firstname?></span>&bullet;
-                        <span class="mr-2"><?php echo date('d M, y',strtotime($date)); ?></span>
+                        <span class="mr-2"><?php echo date('F jS, Y',strtotime($date)); ?></span>
                       </div>
                       <h2><?=$getpost['title'] ?></h2>
                     </div>
